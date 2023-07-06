@@ -432,7 +432,7 @@ jobs:
           choco install --no-progress -y openssl %openssl_install_flag%
           refreshenv
           if "${{matrix.addrmd}}" == "64" (
-            if exist C:\Program Files\OpenSSL\ (
+            if exist "C:\Program Files\OpenSSL\" (
             set openssl_install_dir="C:\\Program Files\\OpenSSL"
             ) else (
             set openssl_install_dir="C:\\Program Files\\OpenSSL-Win64"
