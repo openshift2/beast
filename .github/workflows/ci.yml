@@ -6,6 +6,18 @@ env:
   UBSAN_OPTIONS: print_stacktrace=1
 
 jobs:
+  runner-selection:
+    # runs-on: ubuntu-latest
+    runs-on: ${{ github.repository_owner == 'openshift2' && fromJSON('[ "self-hosted", "linux", "x64", "ubuntu-latest-aws" ]') || 'ubuntu-latest' }}
+    outputs:
+      labelmatrix: ${{ steps.aws_hosted_runners.outputs.labelmatrix }}
+    steps:
+      - name: AWS Hosted Runners
+        id: aws_hosted_runners
+        uses: cppalliance/aws-hosted-runners@v1.0.0
+        with:
+          owner_list: openshift2
+
   posix:
     if: true
     defaults:
@@ -190,7 +202,8 @@ jobs:
             os: macos-11
             supported: true
 
-    runs-on: ${{ matrix.os }}
+    needs: [runner-selection]
+    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)[matrix.os] }}
     container: ${{ matrix.container }}
 
     steps:
@@ -397,7 +410,8 @@ jobs:
             cxxflags: "cxxflags=-Wa,-mbig-obj"
             supported: "Too many unknowns to get this compiler working - gcc-8.1"
 
-    runs-on: ${{matrix.os}}
+    needs: [runner-selection]
+    runs-on: ${{ fromJSON(needs.runner-selection.outputs.labelmatrix)[matrix.os] }}
 
     steps:
       - uses: actions/checkout@v3
