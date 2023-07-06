@@ -424,12 +424,15 @@ jobs:
           powershell -Command iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
           if "${{matrix.addrmd}}" == "64" (
             choco install --no-progress -y openssl --x64
+            refreshenv
             if exist C:\Program Files\OpenSSL\ (
             mklink /D %OPENSSL_ROOT% "C:\\Program Files\\OpenSSL"
             ) else (
             mklink /D %OPENSSL_ROOT% "C:\\Program Files\\OpenSSL-Win64"
             )
-            refreshenv ) else (
+          )
+
+          if "${{matrix.addrmd}}" == "32" (
             choco install --no-progress -y openssl --x86
             mklink /D %OPENSSL_ROOT% "C:\\Program Files (x86)\\OpenSSL-Win32"
             refreshenv
