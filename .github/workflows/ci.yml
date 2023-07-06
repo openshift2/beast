@@ -429,8 +429,11 @@ jobs:
             set openssl_install_flag=--x86
             set openssl_install_dir="C:\\Program Files (x86)\\OpenSSL-Win32"
           )
+          
+          echo "Starting choco install"
           choco install --no-progress -y openssl %openssl_install_flag%
-          refreshenv
+          echo "Finish choco install"
+
           if "${{matrix.addrmd}}" == "64" (
             if exist "C:\Program Files\OpenSSL\" (
             set openssl_install_dir="C:\\Program Files\\OpenSSL"
@@ -438,7 +441,9 @@ jobs:
             set openssl_install_dir="C:\\Program Files\\OpenSSL-Win64"
             )
           )
+          echo "Will mklink"
           mklink /D %OPENSSL_ROOT% %openssl_install_dir%
+          refreshenv
           set
 
       - name: Setup Boost
